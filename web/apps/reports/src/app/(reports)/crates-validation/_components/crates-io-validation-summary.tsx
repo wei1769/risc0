@@ -1,6 +1,6 @@
 import { Badge } from "@risc0/ui/badge";
 import { cn } from "@risc0/ui/cn";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@risc0/ui/tooltip";
+import { Tooltip, TooltipArrow, TooltipContent, TooltipTrigger } from "@risc0/ui/tooltip";
 import type { CratesIoValidationTableSchema } from "./crates-io-validation-table-schema";
 
 type CratesIoValidationSummaryProps = {
@@ -26,12 +26,13 @@ export function CratesIoValidationSummary({ data }: CratesIoValidationSummaryPro
                 )}
               />
             </TooltipTrigger>
-            <TooltipContent className="flex items-center gap-4">
+            <TooltipContent disableAnimation className="flex items-center gap-4">
               <p>{item.name}</p>
               {item.version && <p>v{item.version}</p>}
               <Badge variant="outline" className="rounded-full text-[10px] text-white dark:text-black">
                 {item.status}
               </Badge>
+              <TooltipArrow />
             </TooltipContent>
           </Tooltip>
         ))}

@@ -130,7 +130,7 @@ struct Params {
     w_accum: f32,
     /// No. of trace polynomials
     n_trace_polys: f32,
-    /// Max degree of the constraint system, i.e. no. of segment polynomials
+    /// no. of segment polynomials
     d: f32,
     /// Max. no. of entries used from a single column
     biggest_combo: f32,
@@ -188,8 +188,12 @@ fn parameters<H: Hal>(taps: &TapSet, coeffs_size: usize) -> Params {
 impl Params {
     fn plonk_plookup_error(&self) -> f32 {
         let w_accum: f32 = self.w_accum;
+        let d: f32 = self.d as f32;
+        let trace_domain_size: f32 = self.trace_domain_size as f32;
         tracing::info!("w_accum: {w_accum:?}");
-        self.w_accum as f32 / self.ext_size as f32 * (self.d - 2.0) * self.trace_domain_size
+        tracing::info!("d: {d:?}");
+        tracing::info!("trace_domain_size: {trace_domain_size:?}");
+        self.w_accum as f32 / self.ext_size as f32 * (self.d - 1.0) * self.trace_domain_size * 4.0
             / self.ext_field_size
     }
 

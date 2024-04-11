@@ -83,15 +83,19 @@ pub fn conjectured_strict<H: Hal>(taps: &TapSet, coeffs_size: usize) -> f32 {
 ///    constraint).
 /// 2. The security of FRI matches its known upper bound (rather than the proven
 ///    lower bound).
-pub fn toy_model_security<H: Hal>() -> f32 {
+pub fn toy_model_security<H: Hal>(taps: &TapSet, coeffs_size: usize) -> f32 {
+    let params = parameters::<H>(taps, coeffs_size);
     let ext_size = H::ExtElem::EXT_SIZE as f32;
     let field_size = baby_bear::P as f32;
     let ext_field_size = field_size.powf(ext_size);
 
+    let plonk_plookup_error = params.plonk_plookup_error();
+    let plonk_plookup_bits = plonk_plookup_error.log2();
+    tracing::info!("plonk_plookup_error: {plonk_plookup_bits:?}");
     let constraints_error = 1f32 / ext_field_size;
     let fri_error = RHO.powi(crate::QUERIES as i32);
 
-    let sum = constraints_error + fri_error;
+    let sum = plonk_plookup_error + constraints_error + fri_error;
     sum.log2().abs()
 }
 
@@ -122,11 +126,8 @@ fn num_folding_rounds(coeffs_size: usize, ext_size: usize) -> usize {
 
 #[derive(Copy, Clone)]
 struct Params {
-    /// The number of duplicated data columns in the witness that appear
-    /// due to the permutation from trace_time to trace_mem
-    n_sigma_mem: usize,
-    /// The number of columns in the witness that appear due to the bytes-lookup
-    n_sigma_bytes: usize,
+    /// Number of columns used in the accum section of the trace
+    w_accum: f32,
     /// No. of trace polynomials
     n_trace_polys: f32,
     /// Max degree of the constraint system, i.e. no. of segment polynomials
@@ -149,12 +150,9 @@ struct Params {
 /// global constants.
 fn parameters<H: Hal>(taps: &TapSet, coeffs_size: usize) -> Params {
     // Circuit-specific info
-    // FIXME: get from circuit instead of hard-coding
-    let n_sigma_mem = 5;
-    // FIXME: get from circuit instead of hard-coding
-    let n_sigma_bytes = 15;
+    let w_accum = taps.group_size(REGISTER_GROUP_ACCUM) as f32;
+
     let n_trace_polys = {
-        let w_accum = taps.group_size(REGISTER_GROUP_ACCUM) as f32;
         let w_code = taps.group_size(REGISTER_GROUP_CODE) as f32;
         let w_data = taps.group_size(REGISTER_GROUP_DATA) as f32;
 
@@ -175,8 +173,7 @@ fn parameters<H: Hal>(taps: &TapSet, coeffs_size: usize) -> Params {
     let num_folding_rounds = num_folding_rounds(coeffs_size, ext_size);
 
     Params {
-        n_sigma_mem,
-        n_sigma_bytes,
+        w_accum,
         n_trace_polys,
         d,
         biggest_combo,
@@ -190,8 +187,10 @@ fn parameters<H: Hal>(taps: &TapSet, coeffs_size: usize) -> Params {
 
 impl Params {
     fn plonk_plookup_error(&self) -> f32 {
-        let n_columns = self.n_sigma_mem + self.n_sigma_bytes;
-        self.ext_size as f32 * n_columns as f32 * self.trace_domain_size / self.ext_field_size
+        let w_accum: f32 = self.w_accum;
+        tracing::info!("w_accum: {w_accum:?}");
+        self.w_accum as f32 / self.ext_size as f32 * (self.d - 2.0) * self.trace_domain_size
+            / self.ext_field_size
     }
 
     /// (m + 1/2)^7 / (3 * sqrt(ρ)^3) * |D|^2 / |K|

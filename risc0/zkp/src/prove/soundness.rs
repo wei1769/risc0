@@ -193,7 +193,7 @@ impl Params {
         tracing::info!("w_accum: {w_accum:?}");
         tracing::info!("d: {d:?}");
         tracing::info!("trace_domain_size: {trace_domain_size:?}");
-        self.w_accum as f32 / self.ext_size as f32 * (self.d - 1.0) * self.trace_domain_size * 4.0
+        self.w_accum as f32 / self.ext_size as f32 * (self.d - 1.0) * self.trace_domain_size
             / self.ext_field_size
     }
 

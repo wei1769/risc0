@@ -18,10 +18,12 @@ export function Breadcrumbs() {
   const pathname = usePathname();
   const paths = compact(pathname.split("/"));
 
-  if (pathname === "/") {
+  if (paths.length <= 1) {
     // non-breaking space to keep alignment
     return <>&nbsp;</>;
   }
+
+  const pathsWithoutVersion = paths.slice(1);
 
   return (
     <>
@@ -35,7 +37,7 @@ export function Breadcrumbs() {
           <BreadcrumbSeparator>
             <ChevronRightIcon />
           </BreadcrumbSeparator>
-          {paths.map((path, index, { length }) => {
+          {pathsWithoutVersion.map((path, index, { length }) => {
             const isLast = length - 1 === index;
             const sanitizedChunk = joinWords(path);
 

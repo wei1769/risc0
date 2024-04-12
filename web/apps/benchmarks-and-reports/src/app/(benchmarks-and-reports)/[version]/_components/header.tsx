@@ -4,8 +4,13 @@ import { GithubIcon } from "lucide-react";
 import Image from "next/image";
 import { ThemeToggle } from "shared/client/theme/theme-toggle";
 import { Breadcrumbs } from "./breadcrumbs";
+import { VersionSelect } from "./version-select";
 
-export function Header() {
+type HeaderProps = {
+  version: string;
+};
+
+export function Header({ version }: HeaderProps) {
   return (
     <div className="container flex max-w-screen-3xl flex-row justify-between py-6">
       <Link href="/" className="flex flex-col gap-2 transition-opacity hover:opacity-70">
@@ -18,6 +23,8 @@ export function Header() {
         <Breadcrumbs />
 
         <div className="flex flex-row justify-end gap-2">
+          <VersionSelect version={version} />
+
           <ThemeToggle />
 
           <Link tabIndex={-1} target="_blank" href="https://github.com/risc0/risc0/">

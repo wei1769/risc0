@@ -11,6 +11,18 @@ const config = {
   experimental: {
     caseSensitiveRoutes: true,
   },
+
+  // permanent redirects
+  // biome-ignore lint/suspicious/useAwait: ignore for this one
+  async redirects() {
+    return [
+      {
+        source: "/",
+        destination: "/latest",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default withBundleAnalyzer({

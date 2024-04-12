@@ -37,4 +37,18 @@ export default async (request: NextRequest) => {
   } catch (error) {
     console.error(error);
   }
+
+  // return url for server component use of `params`
+  const { pathname } = request.nextUrl;
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-pathname", pathname);
+
+  const response = NextResponse.next({
+    request: {
+      // New request headers
+      headers: requestHeaders,
+    },
+  });
+
+  return response;
 };

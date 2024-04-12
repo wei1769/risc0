@@ -4,6 +4,7 @@ import { GithubIcon } from "lucide-react";
 import Image from "next/image";
 import { ThemeToggle } from "shared/client/theme/theme-toggle";
 import { Breadcrumbs } from "./breadcrumbs";
+import { LinkWithVersion } from "./link-with-version";
 import { VersionSelect } from "./version-select";
 
 type HeaderProps = {
@@ -13,11 +14,11 @@ type HeaderProps = {
 export function Header({ version }: HeaderProps) {
   return (
     <div className="container flex max-w-screen-3xl flex-row justify-between py-6">
-      <Link href="/" className="flex flex-col gap-2 transition-opacity hover:opacity-70">
+      <LinkWithVersion href="/" className="flex flex-col gap-2 transition-opacity hover:opacity-70">
         <Image width={59} height={43} src="/risczero.webp" alt="RISC Zero" className="invert dark:invert-0" />
 
         <h1 className="truncate text-[10px] text-primary">Benchmarks & Reports</h1>
-      </Link>
+      </LinkWithVersion>
 
       <div className="ml-8 flex w-full flex-row items-center justify-between gap-12">
         <Breadcrumbs />

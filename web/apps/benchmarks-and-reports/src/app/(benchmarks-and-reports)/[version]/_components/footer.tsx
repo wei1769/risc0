@@ -8,7 +8,7 @@ export function Footer() {
     <div className="space-x-2 py-6 pt-6 text-center text-muted-foreground text-xs">
       <span>
         Built by{" "}
-        <Link className="link text-muted-foreground" href="https://www.risczero.com" target="_blank">
+        <Link target="_blank" className="link text-muted-foreground" href="https://www.risczero.com">
           Risc Zero
         </Link>
       </span>

@@ -1,4 +1,3 @@
-import { Link } from "@risc0/ui/link";
 import { Separator } from "@risc0/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@risc0/ui/tabs";
 import { truncate } from "@risc0/ui/utils/truncate";
@@ -7,6 +6,7 @@ import { redirect } from "next/navigation";
 import { CopyButton } from "shared/client/components/copy-button";
 import { convertCsvToJson } from "shared/utils/convert-csv-to-json";
 import { replace } from "string-ts";
+import { LinkWithVersion } from "../../_components/link-with-version";
 import { APPLICATIONS_BENCHMARKS_DESCRIPTION } from "../../_utils/constants";
 import { fetchApplicationsBenchmarks } from "./_actions/fetch-applications-benchmarks";
 import { fetchApplicationsBenchmarksCommitHash } from "./_actions/fetch-applications-benchmarks-commit-hash";
@@ -26,7 +26,7 @@ export default async function ApplicationsBenchmarksPage({ params }) {
   const data = await Promise.all(dataPromises);
 
   if (!params.slug) {
-    redirect(`/applications-benchmarks/${replace(Object.keys(FILENAMES_TO_TITLES)[0]!, ".csv", "")}`);
+    redirect(`/${params.version}/applications-benchmarks/${replace(Object.keys(FILENAMES_TO_TITLES)[0]!, ".csv", "")}`);
   }
 
   return (
@@ -46,11 +46,11 @@ export default async function ApplicationsBenchmarksPage({ params }) {
         <div className="flex items-center overflow-auto">
           <TabsList>
             {Object.keys(FILENAMES_TO_TITLES).map((filename, index) => (
-              <Link key={filename} href={`/applications-benchmarks/${replace(filename, ".csv", "")}`}>
+              <LinkWithVersion key={filename} href={`/applications-benchmarks/${replace(filename, ".csv", "")}`}>
                 <TabsTrigger value={replace(filename, ".csv", "")}>
                   {Object.values(FILENAMES_TO_TITLES)[index]}
                 </TabsTrigger>
-              </Link>
+              </LinkWithVersion>
             ))}
           </TabsList>
         </div>

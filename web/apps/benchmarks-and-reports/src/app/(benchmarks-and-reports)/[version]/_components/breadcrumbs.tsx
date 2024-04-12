@@ -8,7 +8,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@risc0/ui/breadcrumb";
-import { Link } from "@risc0/ui/link";
 import compact from "lodash-es/compact";
 import { ChevronRightIcon } from "lucide-react";
 import { usePathname } from "next/navigation";
@@ -30,13 +29,10 @@ export function Breadcrumbs() {
     <>
       {/* non-breaking space to keep alignment */}
       <div className="block md:hidden">&nbsp;</div>
-
       <Breadcrumb className="hidden md:block">
         <BreadcrumbList>
           <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-              <Link href="/">Home</Link>
-            </BreadcrumbLink>
+            <BreadcrumbLink href="/">Home</BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator>
             <ChevronRightIcon />
@@ -51,10 +47,8 @@ export function Breadcrumbs() {
                   <BreadcrumbPage className="capitalize">{sanitizedChunk}</BreadcrumbPage>
                 ) : (
                   <BreadcrumbItem>
-                    <BreadcrumbLink asChild>
-                      <Link className="capitalize" href={`/${path}`}>
-                        {sanitizedChunk}
-                      </Link>
+                    <BreadcrumbLink className="capitalize" href={`/${path}`}>
+                      {sanitizedChunk}
                     </BreadcrumbLink>
                   </BreadcrumbItem>
                 )}

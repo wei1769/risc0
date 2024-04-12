@@ -1,6 +1,7 @@
 import { Card, CardDescription, CardTitle } from "@risc0/ui/card";
 import { Link } from "@risc0/ui/link";
 import Image from "next/image";
+import { LinkWithVersion } from "./_components/link-with-version";
 
 const REPORTS = [
   {
@@ -30,6 +31,7 @@ export default function ReportsPage({ params }: { params: { version: string } })
 
   return (
     <div className="container grid max-w-screen-xl grid-cols-1 gap-4 pt-4 lg:grid-cols-2">
+      <LinkWithVersion />
       {REPORTS.map(({ label, href, description }, index) => (
         <Link key={href} href={`/${version}/${href}`} className="group transition-opacity hover:opacity-70">
           <Card className="group-hover:-translate-y-1 flex h-full min-h-44 w-full flex-col items-center justify-between gap-1 px-8 py-4 shadow-sm transition-transform md:flex-row md:gap-12">

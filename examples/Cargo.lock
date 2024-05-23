@@ -2568,7 +2568,9 @@ version = "0.1.0"
 dependencies = [
  "json-core",
  "json-methods",
+ "risc0-groth16",
  "risc0-zkvm",
+ "serde",
 ]
 
 [[package]]

@@ -13,9 +13,12 @@
 // limitations under the License.
 
 use std::{
-    env::consts::ARCH,
+
+
+    // env::consts::ARCH,
+
     path::Path,
-    process::{Command, Stdio},
+    process::{Command},
 };
 
 use anyhow::{bail, Result};
@@ -26,16 +29,21 @@ use crate::{to_json, ProofJson, Seal};
 /// Compact a given seal of an `identity_p254` receipt into a Groth16 `Seal`.
 /// Requires running Docker on an x86 architecture.
 pub fn stark_to_snark(identity_p254_seal_bytes: &[u8]) -> Result<Seal> {
-    if !is_x86_architecture() {
-        bail!("stark_to_snark is only supported on x86 architecture.")
-    }
+    // if !is_x86_architecture() {
+    //     bail!("stark_to_snark is only supported on x86 architecture.")
+    // }
     if !is_docker_installed() {
         bail!("Please install docker first.")
     }
 
     let tmp_dir = tempdir()?;
-    let work_dir = std::env::var("RISC0_WORK_DIR");
-    let work_dir = work_dir.as_ref().map(Path::new).unwrap_or(tmp_dir.path());
+    let tmp = tmp_dir.path().to_string_lossy().to_ascii_lowercase();
+    let work_dir: std::prelude::v1::Result<String, std::env::VarError> = std::env::var("RISC0_WORK_DIR");
+
+    let work_dir = work_dir
+        .as_ref()
+        .map(|x| Path::new(x))
+        .unwrap_or(Path::new(&tmp));
 
     tracing::debug!("seal-to-json");
     std::fs::write(work_dir.join("seal.r0"), identity_p254_seal_bytes)?;
@@ -49,16 +57,18 @@ pub fn stark_to_snark(identity_p254_seal_bytes: &[u8]) -> Result<Seal> {
     let output = Command::new("docker")
         .arg("run")
         .arg("--rm")
+        .arg("--platform")
+        .arg("linux/amd64")
         .arg("-v")
         .arg(&format!("{}:/mnt", work_dir.to_string_lossy()))
         .arg("risczero/risc0-groth16-prover:v2024-05-17.1")
-        .stdout(Stdio::piped())
-        .stderr(Stdio::piped())
+        // .stdout(Stdio::piped())
+        // .stderr(Stdio::piped())
         .output()?;
     if !output.status.success() {
         bail!(
             "docker returned failure exit code: {:?}",
-            output.status.code()
+            output
         );
     }
 
@@ -76,6 +86,6 @@ fn is_docker_installed() -> bool {
         .unwrap_or(false)
 }
 
-fn is_x86_architecture() -> bool {
-    ARCH == "x86_64" || ARCH == "x86"
-}
+// fn is_x86_architecture() -> bool {
+//     ARCH == "x86_64" || ARCH == "x86"
+// }
